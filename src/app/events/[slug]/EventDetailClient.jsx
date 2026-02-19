@@ -525,6 +525,11 @@ export function EventDetailClient({ event }) {
                   <Button
                     className={`w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r ${config.color} hover:opacity-90 transition-all shadow-lg group cursor-pointer`}
                     disabled={!event.registration?.isOpen}
+                    onClick={() => {
+                      if (event.registration?.isOpen) {
+                        router.push(`/events/${event.slug}/register`);
+                      }
+                    }}
                   >
                     {event.registration?.isOpen ? (
                       <>

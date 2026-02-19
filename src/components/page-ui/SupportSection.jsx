@@ -22,7 +22,7 @@ export default function SupportSection() {
                                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex-shrink-0" />
                                         <div className="bg-[#252525] rounded-2xl rounded-tl-none py-3 px-4">
                                             <p className="text-gray-300">
-                                                Hello I&apos;m Sam, <br />
+                                                Hello I&apos;m Deenu, <br />
                                                 how can I help you today?
                                             </p>
                                         </div>

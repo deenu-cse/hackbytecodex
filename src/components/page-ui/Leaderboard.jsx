@@ -1,4 +1,3 @@
-// app/components/Leaderboard.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -28,20 +27,18 @@ export default function Leaderboard() {
 
         const data = await res.json();
         
-        // If no data or empty array, keep empty
         if (!data.success || !data.data || data.data.length === 0) {
           setChapters([]);
           setLoading(false);
           return;
         }
 
-        // Map backend data to component format
         const mappedData = data.data.map((item, idx) => ({
           rank: item.rank || idx + 1,
           name: item.name || "Unknown",
           location: item.college?.collegeName || item.location || "",
           score: item.totalScore || 0,
-          growth: Math.round((item.avgScore || 0) * 10), // Convert avg to growth-like metric
+          growth: Math.round((item.avgScore || 0) * 10), 
           members: item.eventsCount || 0,
           color: idx === 0 
             ? "from-yellow-400 to-orange-500" 
@@ -55,7 +52,6 @@ export default function Leaderboard() {
 
         setChapters(mappedData);
       } catch (err) {
-        // Silently fail - no error display
         setChapters([]);
       } finally {
         setLoading(false);
@@ -65,12 +61,10 @@ export default function Leaderboard() {
     fetchLeaderboard();
   }, []);
 
-  // Don't render anything if no data and not loading
   if (!loading && chapters.length === 0) {
     return null;
   }
 
-  // Show loading state briefly then disappear if no data
   if (loading) {
     return (
       <section className="relative bg-black py-24 px-4 overflow-hidden">
@@ -85,7 +79,7 @@ export default function Leaderboard() {
   const restList = chapters.slice(3);
 
   return (
-    <section className="relative bg-black py-24 px-4 overflow-hidden">
+    <section className="relative bg-black py-5 px-4 overflow-hidden">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="max-w-5xl mx-auto relative z-10">

@@ -2,6 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Quote, Star, ArrowRight, BadgeCheck } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 
 const testimonials = [
   {
@@ -30,7 +37,50 @@ const testimonials = [
   }
 ];
 
+const TestimonialCard = ({ item }) => (
+  <div className="group relative rounded-3xl bg-[#0f0f0f] border border-white/10 hover:border-white/20 p-8 transition-all duration-300 hover:-translate-y-1 h-full">
+    <Quote className="absolute top-6 right-6 w-10 h-10 text-white/5 group-hover:text-blue-500/20 transition-colors" />
+    
+    <div className="flex gap-1 mb-6">
+      {[...Array(item.rating)].map((_, i) => (
+        <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+      ))}
+    </div>
+
+    <p className="text-gray-300 text-lg leading-relaxed mb-8 relative z-10">
+      "{item.quote}"
+    </p>
+
+    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
+
+    <div className="flex items-center gap-4">
+      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.color} p-0.5`}>
+        <div className="w-full h-full rounded-full bg-[#0f0f0f] flex items-center justify-center text-white font-semibold text-sm">
+          {item.avatar}
+        </div>
+      </div>
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <span className="text-white font-semibold">{item.name}</span>
+          <BadgeCheck className="w-4 h-4 text-blue-500" />
+        </div>
+        <p className="text-sm text-blue-400">{item.role}</p>
+      </div>
+    </div>
+
+    <div className={`absolute -inset-px rounded-3xl bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-10 blur-xl transition-opacity -z-10`} />
+  </div>
+);
+
 export default function Testimonials() {
+  const plugin = useRef(
+    Autoplay({ 
+      delay: 4000, 
+      stopOnInteraction: true,
+      stopOnMouseEnter: true 
+    })
+  );
+
   return (
     <section className="relative bg-black py-24 pt-4 px-4 overflow-hidden">
       <div className="absolute top-20 left-10 text-[20rem] text-white/[0.02] font-serif leading-none pointer-events-none select-none">
@@ -47,56 +97,41 @@ export default function Testimonials() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="md:hidden mb-12">
+          <Carousel
+            plugins={[plugin.current]}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+          >
+            <CarouselContent className="-ml-4">
+              {testimonials.map((item, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-[85%] py-4.5">
+                  <TestimonialCard item={item} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
+
+        <div className="hidden md:grid md:grid-cols-3 gap-6 mb-12">
           {testimonials.map((item, idx) => (
-            <div 
-              key={idx}
-              className="group relative rounded-3xl bg-[#0f0f0f] border border-white/10 hover:border-white/20 p-8 transition-all duration-300 hover:-translate-y-1"
-            >
-              <Quote className="absolute top-6 right-6 w-10 h-10 text-white/5 group-hover:text-blue-500/20 transition-colors" />
-              
-              <div className="flex gap-1 mb-6">
-                {[...Array(item.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                ))}
-              </div>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8 relative z-10">
-                "{item.quote}"
-              </p>
-
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
-
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.color} p-0.5`}>
-                  <div className="w-full h-full rounded-full bg-[#0f0f0f] flex items-center justify-center text-white font-semibold text-sm">
-                    {item.avatar}
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-semibold">{item.name}</span>
-                    <BadgeCheck className="w-4 h-4 text-blue-500" />
-                  </div>
-                  <p className="text-sm text-blue-400">{item.role}</p>
-                </div>
-              </div>
-
-              <div className={`absolute -inset-px rounded-3xl bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-10 blur-xl transition-opacity -z-10`} />
-            </div>
+            <TestimonialCard key={idx} item={item} />
           ))}
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button 
             variant="outline" 
-            className="group h-12 px-8 border-white/10 hover:border-blue-500/50 hover:bg-white/5 text-blue-600 rounded-xl cursor-pointer"
+            className="group h-12 px-8 border-white/10 hover:border-blue-500/50 hover:bg-white/5 text-blue-600 rounded-xl cursor-pointer w-full sm:w-auto"
           >
             Read More Stories
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button 
-            className="group h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+            className="group h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-xl w-full sm:w-auto"
           >
             Share Your Story
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
