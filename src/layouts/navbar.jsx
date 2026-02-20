@@ -65,21 +65,12 @@ export default function Navbar() {
                 </PopoverContent>
               </Popover>
             ) : (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6">Get started</Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" sideOffset={8} className="w-56 p-4">
-                  <div className="flex flex-col gap-2">
-                    <Button variant="ghost" className="w-full text-white" asChild>
-                      <a href="/register">Register</a>
-                    </Button>
-                    <Button variant="outline" className="w-full text-white" asChild>
-                      <a href="/login">Sign in</a>
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <>
+                <a href="/login" className="text-sm text-gray-300 hover:text-white transition-colors">Sign in</a>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6" asChild>
+                  <a href="/register">Get started</a>
+                </Button>
+              </>
             )}
           </div>
 
