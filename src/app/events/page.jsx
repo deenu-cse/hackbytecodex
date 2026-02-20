@@ -14,7 +14,7 @@ export default function EventsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [total, setTotal] = useState(0);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
   
   const [filters, setFilters] = useState({
     search: "",

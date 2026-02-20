@@ -91,7 +91,7 @@ const modeIcons = {
   HYBRID: Building2,
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/";
 
 export function RegisterClient({ event: initialEvent, formFields: initialFormFields, isClosed: initialIsClosed, slug }) {
   const { user } = useAuth();

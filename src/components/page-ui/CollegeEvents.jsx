@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Calendar, Users, MapPin, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function CollegeEvents() {
     const [events, setEvents] = useState([]);

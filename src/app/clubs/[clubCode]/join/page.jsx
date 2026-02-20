@@ -30,7 +30,7 @@ export default function ClubJoinPage() {
   const [error, setError] = useState(null);
   const [joined, setJoined] = useState(false);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchClub = async () => {
