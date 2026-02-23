@@ -84,8 +84,14 @@ export default function RegisterPage() {
     }, []);
 
     useEffect(() => {
+        // whenever the dropdown opens, or the search term changes, we want to
+        // show items from the last API response first. only if that local
+        // filter returns nothing do we hit the backend again. this keeps us from
+        // querying on every keystroke and fulfils the behaviour described by
+        // the user.
+        if (!showCollegeDropdown) return;
+
         const fetchColleges = async () => {
-            if (!showCollegeDropdown) return;
             setCollegeLoading(true);
             try {
                 const res = await fetch(`${API_URL}/auth/colleges?search=${collegeSearch}&limit=20`);
@@ -100,8 +106,27 @@ export default function RegisterPage() {
             }
         };
 
-        const timeout = setTimeout(fetchColleges, 300);
-        return () => clearTimeout(timeout);
+        // if the search box is empty, always grab a fresh batch of colleges
+        if (!collegeSearch.trim()) {
+            const timeout = setTimeout(fetchColleges, 300);
+            return () => clearTimeout(timeout);
+        }
+
+        // otherwise try filtering the already‑loaded list first
+        const localFiltered = colleges.filter(c =>
+            c.name?.toLowerCase().includes(collegeSearch.toLowerCase()) ||
+            c.address?.city?.toLowerCase().includes(collegeSearch.toLowerCase()) ||
+            c.address?.state?.toLowerCase().includes(collegeSearch.toLowerCase())
+        );
+
+        if (localFiltered.length === 0) {
+            // no matches locally – fall back to the API after a short debounce
+            const timeout = setTimeout(fetchColleges, 300);
+            return () => clearTimeout(timeout);
+        } else {
+            // there are matches; make sure the loader is hidden
+            setCollegeLoading(false);
+        }
     }, [collegeSearch, showCollegeDropdown]);
 
     const validateForm = () => {
@@ -422,8 +447,16 @@ export default function RegisterPage() {
                                                                 }}
                                                                 className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors flex items-center gap-3 border-b border-white/5 last:border-0"
                                                             >
-                                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                                                                    <Building2 className="w-5 h-5 text-blue-400" />
+                                                                <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
+                                                                    {college.logo?.url ? (
+                                                                        <img
+                                                                            src={college.logo.url}
+                                                                            alt={college.name}
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <Building2 className="w-5 h-5 text-blue-400" />
+                                                                    )}
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
                                                                     <p className="text-white font-medium truncate">{college.name}</p> 
