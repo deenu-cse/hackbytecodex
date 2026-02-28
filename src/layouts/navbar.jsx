@@ -25,7 +25,7 @@ export default function Navbar() {
             <a href="/landing" className="text-sm text-gray-300 hover:text-white transition-colors">Home</a>
             <a href="/events" className="text-sm text-gray-300 hover:text-white transition-colors">Events</a>
             <a href="/projects" className="text-sm text-gray-300 hover:text-white transition-colors">Projects</a>
-            <a href="/chapter/demo" className="text-sm text-gray-300 hover:text-white transition-colors">Chapters</a>
+            <a href="/chapters" className="text-sm text-gray-300 hover:text-white transition-colors">Chapters</a>
             <a href="/clubs/demo/join" className="text-sm text-gray-300 hover:text-white transition-colors">Clubs</a>
           </div>
 
