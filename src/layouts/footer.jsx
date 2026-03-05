@@ -23,7 +23,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:col-span-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:col-span-2">
             <div>
               <h4 className="text-white font-semibold mb-4">Resources</h4>
               <ul className="space-y-3">
@@ -48,10 +48,36 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-3">
-                {['Careers', 'Privacy', 'Terms', 'Contact'].map((item) => (
+                {['Careers', 'Contact'].map((item) => (
                   <li key={item}>
                     <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
                       {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <ul className="space-y-3">
+                {[
+                  { name: 'Privacy Policy', href: '/privacy-policy' },
+                  { name: 'Terms & Conditions', href: '/terms-conditions' },
+                  { name: 'Refund Policy', href: '/refund-policy' },
+                  { name: 'Shipping Policy', href: '/shipping-delivery-policy' }
+                ].map((item) => (
+                  <li key={item.name}>
+                    <a href={item.href} className="text-gray-400 hover:text-white transition-colors text-sm flex items-center group">
+                      {item.name}
+                      <svg
+                        className="w-3 h-3 ml-1 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7v10" />
+                      </svg>
                     </a>
                   </li>
                 ))}

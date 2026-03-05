@@ -88,7 +88,7 @@ export default function ChapterCard({ college }) {
             </span>
             <span className="flex items-center gap-1">
               <Users className="w-3.5 h-3.5" />
-              {activeStudents || clubsCount * 50}+ members
+              {activeStudents}+ members
             </span>
           </div>
           

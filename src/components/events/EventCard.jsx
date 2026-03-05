@@ -144,7 +144,7 @@ export function EventCard({ event }) {
                                 </div>
                                 <div>
                                     <p className="text-xs text-white/40">Location</p>
-                                    <p className="text-white font-medium truncate">{event.location.name || "TBA"}</p>
+                                   
                                 </div>
                             </div>
 

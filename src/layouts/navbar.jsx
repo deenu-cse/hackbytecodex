@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useAuth } from "../app/context/AuthContext";
+import Link from "next/link";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,17 +17,23 @@ export default function Navbar() {
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white italic tracking-tighter">
-              hackbyte<span className="text-blue-500">codex</span>
-            </span>
+            <Link href='/'>
+              <span className="text-2xl font-bold text-white italic tracking-tighter">
+                hackbyte<span className="text-blue-500">codex</span>
+              </span>
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="/landing" className="text-sm text-gray-300 hover:text-white transition-colors">Home</a>
+            <a href="/" className="text-sm text-gray-300 hover:text-white transition-colors">Home</a>
             <a href="/events" className="text-sm text-gray-300 hover:text-white transition-colors">Events</a>
             <a href="/projects" className="text-sm text-gray-300 hover:text-white transition-colors">Projects</a>
             <a href="/chapters" className="text-sm text-gray-300 hover:text-white transition-colors">Chapters</a>
             <a href="/clubs/demo/join" className="text-sm text-gray-300 hover:text-white transition-colors">Clubs</a>
+            <a href="/pricing" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              API Platform
+            </a>
           </div>
 
           <div className="hidden md:flex items-center gap-4">
@@ -93,7 +100,7 @@ export default function Navbar() {
           onClick={e => e.stopPropagation()}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-transparent to-blue-950/20 pointer-events-none" />
-          
+
           <div className="relative flex items-center justify-between px-5 py-4 border-b border-blue-500/20 bg-[#0d1220]">
             <span className="text-xl font-bold text-white italic tracking-tighter">
               hackbyte<span className="text-blue-500">codex</span>
@@ -102,15 +109,19 @@ export default function Navbar() {
               <X className="w-7 h-7" />
             </button>
           </div>
-          
+
           <nav className="relative flex flex-col gap-1 px-5 py-4 bg-[#0d1220]">
-            <a href="/landing" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Home</a>
+            <a href="/" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Home</a>
             <a href="/events" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Events</a>
             <a href="/projects" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Projects</a>
-            <a href="/chapter/demo" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Chapters</a>
+            <a href="/chapters" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Chapters</a>
             <a href="/clubs/demo/join" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20">Clubs</a>
+            <a href="/pricing" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-lg transition-all border border-transparent hover:border-blue-500/20 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              API Platform
+            </a>
           </nav>
-          
+
           <div className="relative flex items-center gap-4 px-5 pt-2 pb-4 border-b border-blue-500/20 bg-[#0d1220]">
             <a href="https://wa.me/916378837030 " target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-green-400 transition-colors" title="WhatsApp">
               <MessageCircle className="w-5 h-5" />
@@ -122,7 +133,7 @@ export default function Navbar() {
               <Github className="w-5 h-5" />
             </a>
           </div>
-          
+
           <div className="relative px-5 pt-4 pb-6 flex flex-col gap-2 bg-[#0d1220]">
             {isAuthenticated && user ? (
               <div className="flex flex-col gap-2 items-start">

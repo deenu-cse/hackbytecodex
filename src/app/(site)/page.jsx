@@ -10,6 +10,8 @@ import CTASection from "@/components/page-ui/CTASection"
 import CollegeEvents from "@/components/page-ui/CollegeEvents"
 import Leaderboard from "@/components/page-ui/Leaderboard"
 import Testimonials from "@/components/page-ui/Testimonials"
+import APIHeroSection from "@/components/page-ui/APIHeroSection"
+import APIFeaturesGrid from "@/components/page-ui/APIFeaturesGrid"
 
 export default function HomePage() {
     return (
@@ -18,6 +20,8 @@ export default function HomePage() {
             <Hero />
             <CollegeCloud />
             <Features />
+            <APIHeroSection />
+            <APIFeaturesGrid />
             <CollegeEvents />
             <Leaderboard /> 
             <Testimonials />
