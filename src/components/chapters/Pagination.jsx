@@ -44,7 +44,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         size="icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="border-white/10 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="border-white/10 text-white bg-orange-400/60 hover:bg-orange-400/80  disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
         <ChevronLeft className="w-4 h-4" />
       </Button>
@@ -60,7 +60,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
             className={`min-w-[40px] ${
               currentPage === page
                 ? "bg-blue-600 hover:bg-blue-700 text-white"
-                : "border-white/10 text-white hover:bg-white/10"
+                : "border-white/10 text-white bg-white/10 cursor-pointer"
             }`}
           >
             {page}
@@ -73,7 +73,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         size="icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="border-white/10 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="border-white/10 text-white bg-orange-400/60 hover:bg-orange-400/80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
         <ChevronRight className="w-4 h-4" />
       </Button>

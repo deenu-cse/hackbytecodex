@@ -237,11 +237,11 @@ export default function CollegeEvents() {
                                                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
                                                     <div className="flex items-center gap-2 text-gray-400 text-sm">
                                                         <Users className="w-4 h-4" />
-                                                        <span>{event.registeredCount || 0} attending</span>
+                                                        <span>{event.participantsCount || 0} attending</span>
                                                         {event.registration?.limit && (
                                                             <span className="ml-4">limit: {event.registration.limit}</span>
                                                         )}
-                                                        {event.registration?.fee && (
+                                                        {event.registration?.fee > 0 && (
                                                             <span className="ml-4">fee: ₹{event.registration.fee}</span>
                                                         )}
                                                     </div>

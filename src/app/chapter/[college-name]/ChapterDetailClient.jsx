@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -22,8 +23,17 @@ import Footer from "../../../layouts/footer";
 import TierBadge from "@/components/chapters/TierBadge";
 
 export default function ChapterDetailClient({ college }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [activeEventIndex, setActiveEventIndex] = useState(0);
+  
+  useEffect(() => {
+    const fromPage = searchParams.get('fromPage');
+    if (fromPage) {
+      sessionStorage.setItem('redirectToPage', fromPage);
+    }
+  }, [searchParams]);
   
   const clubs = college.clubs || [];
   const events = college.recentEvents || [];

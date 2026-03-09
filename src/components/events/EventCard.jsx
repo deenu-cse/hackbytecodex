@@ -111,9 +111,11 @@ export function EventCard({ event }) {
                                         </>
                                     )}
                                 </div>
-                                <h3 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-blue-400 transition-colors leading-tight">
-                                    {event.title}
-                                </h3>
+                                <Link href={`/events/${event.slug}`}>
+                                    <h3 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-blue-400 transition-colors leading-tight cursor-pointer">
+                                        {event.title}
+                                    </h3>
+                                </Link>
                             </div>
                             <div className="hidden sm:flex flex-col items-end gap-2">
                                 <Badge variant="outline" className="border-white/10 text-white/60">

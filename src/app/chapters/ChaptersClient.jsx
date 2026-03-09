@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, Building2, Users, SlidersHorizontal, X } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Search, Building2, Users, SlidersHorizontal, X, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,10 @@ import Pagination from "@/components/chapters/Pagination";
 import { fetchColleges } from "@/lib/api/colleges";
 
 export default function ChaptersClient({ initialColleges, initialTotal }) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    
     const [colleges, setColleges] = useState(initialColleges || []);
     const [total, setTotal] = useState(initialTotal || 0);
     const [loading, setLoading] = useState(false);
@@ -26,7 +31,7 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
         sortBy: ""
     });
     const [pagination, setPagination] = useState({
-        page: 1,
+        page: parseInt(searchParams.get('page')) || 1,
         limit: 12
     });
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -45,6 +50,37 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
     }, [filters, pagination]);
 
     useEffect(() => {
+        // Restore pagination from localStorage on mount
+        const savedPage = localStorage.getItem('chaptersPage');
+        
+        // Check if we're redirecting from a chapter page
+        const redirectPage = sessionStorage.getItem('redirectToPage');
+        
+        if (redirectPage) {
+            // Use the redirect page and clear it
+            setPagination(prev => ({ ...prev, page: parseInt(redirectPage) }));
+            sessionStorage.removeItem('redirectToPage');
+        } else if (savedPage && !searchParams.get('page')) {
+            // Otherwise use saved page from localStorage
+            setPagination(prev => ({ ...prev, page: parseInt(savedPage) }));
+        }
+    }, []);
+
+    useEffect(() => {
+        // Save current page to localStorage whenever it changes
+        localStorage.setItem('chaptersPage', pagination.page.toString());
+        
+        // Update URL with page parameter
+        const params = new URLSearchParams(searchParams.toString());
+        if (pagination.page > 1) {
+            params.set('page', pagination.page.toString());
+        } else {
+            params.delete('page');
+        }
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pagination.page]);
+
+    useEffect(() => {
         loadColleges();
     }, [loadColleges]);
 
@@ -56,6 +92,10 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
     function handlePageChange(newPage) {
         setPagination(prev => ({ ...prev, page: newPage }));
         window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function handleBack() {
+        router.back();
     }
 
     function handleClearFilters() {
@@ -78,6 +118,15 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
 
     return (
         <div className="min-h-screen bg-black">
+            {/* Back Button */}
+            <button
+                onClick={handleBack}
+                className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-white hover:bg-white/10 transition-all group"
+            >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                <span className="text-sm font-medium">Back</span>
+            </button>
+
             <section className="relative py-5 md:py-8 px-4 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-950/30 via-black to-black" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />

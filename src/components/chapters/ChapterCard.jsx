@@ -14,8 +14,10 @@ export default function ChapterCard({ college }) {
   const clubsCount = college.stats?.clubsCount || 0;
   const activeStudents = college.stats?.activeStudents || 0;
   
+  const currentPage = typeof window !== 'undefined' ? localStorage.getItem('chaptersPage') || '1' : '1';
+  
   return (
-    <Link href={`/chapter/${encodeURIComponent(college.name)}`}>
+    <Link href={`/chapter/${encodeURIComponent(college.name)}?fromPage=${currentPage}`}>
       <div className="group relative rounded-2xl bg-[#0f0f0f] border border-white/10 hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
         {/* Banner */}
         <div className="relative h-32 overflow-hidden">
