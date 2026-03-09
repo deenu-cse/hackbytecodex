@@ -41,6 +41,7 @@ export async function generateMetadata({ params }) {
     }
 
     const event = eventData.data;
+    console.log('eventData', eventData)
     const imageUrl = event.banners?.[0]?.url || "https://hackbytecodex.com/default-event.jpg";
 
     return {

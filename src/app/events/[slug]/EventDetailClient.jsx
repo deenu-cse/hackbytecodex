@@ -19,7 +19,12 @@ import {
   XCircle,
   Sparkles,
   CalendarDays,
-  ExternalLink
+  ExternalLink,
+  LinkIcon,
+  Copy,
+  Check,
+  Discord,
+  Video
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -74,6 +79,7 @@ export function EventDetailClient({ event }) {
   const [currentImage, setCurrentImage] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(null);
   const router = useRouter();
 
   const { scrollYProgress } = useScroll();
@@ -110,9 +116,23 @@ export function EventDetailClient({ event }) {
       await navigator.clipboard.writeText(window.location.href);
       setShowShareToast(true);
       setTimeout(() => setShowShareToast(false), 2000);
+    };
+  };
+  
+  const handleCopyReferral = async (code, type) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedLink(type);
+      setTimeout(() => setCopiedLink(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
     }
   };
-
+  
+  const handleExternalLinkClick = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+  
   const formatDate = (date) => {
     if (!date) return "TBA";
     return new Date(date).toLocaleDateString("en-US", {
@@ -198,7 +218,6 @@ export function EventDetailClient({ event }) {
           }} />
         </div>
 
-        {/* Hero Content */}
         <div className="absolute inset-0 flex items-end">
           <div className="max-w-7xl mx-auto px-4 pb-12 w-full">
             <motion.div
@@ -207,14 +226,12 @@ export function EventDetailClient({ event }) {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-6"
             >
-              {/* Breadcrumb */}
               <div className="flex items-center gap-2 text-sm text-white/60">
                 <Link href="/events" className="hover:text-white transition-colors">Events</Link>
                 <ChevronLeft className="w-4 h-4 rotate-180" />
                 <span className="text-white">{event.eventType}</span>
               </div>
 
-              {/* Title & Badges */}
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge className={`${config.bg} ${config.text} ${config.border} border text-sm px-3 py-1`}>
@@ -280,7 +297,7 @@ export function EventDetailClient({ event }) {
                     <p className="font-semibold">{event.location.name || "Virtual Event"}</p>
                   </div>
                 </div>
-
+ 
                 <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-3">
                   <Users className="w-5 h-5 text-blue-400" />
                   <div>
@@ -630,6 +647,145 @@ export function EventDetailClient({ event }) {
                   </div>
                 </div>
               </motion.div>
+
+              {(event.externalLinks?.registration || event.externalLinks?.website || event.externalLinks?.additionalInfo || event.externalLinks?.referralCode) && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.25 }}
+                  className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-blue-500/20 rounded-3xl p-6"
+                >
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full animate-pulse" />
+                  <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/20 blur-3xl rounded-full animate-pulse" />
+                  
+                  <div className="relative z-10 space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <ExternalLink className="w-5 h-5 text-blue-400" />
+                      Quick Access
+                    </h3>
+
+                    {event.externalLinks?.referralCode && (
+                      <div className="group relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="relative bg-black/40 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg">
+                                <Sparkles className="w-4 h-4 text-white" />
+                              </div>
+                              <span className="text-sm font-medium text-blue-300">Referral Code</span>
+                            </div>
+                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+                              Use when registering
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2 mt-3">
+                            <div className="flex-1 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/30 rounded-lg px-4 py-3 font-mono text-lg font-bold text-center text-blue-300 tracking-wider">
+                              {event.externalLinks.referralCode}
+                            </div>
+                            <Button
+                              onClick={() => handleCopyReferral(event.externalLinks.referralCode, 'referral')}
+                              className={`h-full px-4 rounded-lg transition-all duration-300 ${
+                                copiedLink === 'referral'
+                                  ? 'bg-green-500 hover:bg-green-600'
+                                  : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
+                              }`}
+                            >
+                              {copiedLink === 'referral' ? (
+                                <Check className="w-5 h-5" />
+                              ) : (
+                                <Copy className="w-5 h-5" />
+                              )}
+                            </Button>
+                          </div>
+                          <AnimatePresence>
+                            {copiedLink === 'referral' && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                className="mt-2 flex items-center gap-2 text-xs text-green-400"
+                              >
+                                <CheckCircle2 className="w-3 h-3" />
+                                Referral code copied!
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      {event.externalLinks?.registration && (
+                        <motion.button
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleExternalLinkClick(event.externalLinks.registration)}
+                          className="w-full group flex items-center justify-between gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-3 transition-all duration-300"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-green-500/20 rounded-lg group-hover:bg-green-500/30 transition-colors">
+                              <LinkIcon className="w-5 h-5 text-green-400" />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-sm font-semibold text-green-300">Registration Link</p>
+                              <p className="text-xs text-gray-400 truncate max-w-[200px]">
+                                {event.externalLinks.registration.replace(/^https?:\/\//, '')}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-green-400 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                        </motion.button>
+                      )}
+
+                      {event.externalLinks?.website && (
+                        <motion.button
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleExternalLinkClick(event.externalLinks.website)}
+                          className="w-full group flex items-center justify-between gap-3 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-3 transition-all duration-300"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-500/20 rounded-lg group-hover:bg-blue-500/30 transition-colors">
+                              <Globe className="w-5 h-5 text-blue-400" />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-sm font-semibold text-blue-300">Official Website</p>
+                              <p className="text-xs text-gray-400 truncate max-w-[200px]">
+                                {event.externalLinks.website.replace(/^https?:\/\//, '')}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-blue-400 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                        </motion.button>
+                      )}
+                      {Object.entries(event.externalLinks?.additionalInfo || {}).map(([platform, url]) => (
+                        <motion.button
+                          key={platform}
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleExternalLinkClick(url)}
+                          className="w-full group flex items-center justify-between gap-3 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 hover:from-purple-500/20 hover:to-indigo-500/20 border border-purple-500/30 hover:border-purple-500/50 rounded-xl p-3 transition-all duration-300"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-purple-500/20 rounded-lg group-hover:bg-purple-500/30 transition-colors">
+                              <Video className="w-5 h-5 text-purple-400" />
+                            </div>
+                            <div className="text-left capitalize">
+                              <p className="text-sm font-semibold text-purple-300">{platform} Link</p>
+                              <p className="text-xs text-gray-400 truncate max-w-[200px]">
+                                {url.replace(/^https?:\/\//, '')}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-purple-400 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
