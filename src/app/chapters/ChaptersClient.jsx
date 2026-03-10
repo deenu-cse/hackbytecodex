@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Search, Building2, Users, SlidersHorizontal, X, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,44 @@ import ChapterFilters from "@/components/chapters/ChapterFilters";
 import Pagination from "@/components/chapters/Pagination";
 import { fetchColleges } from "@/lib/api/colleges";
 
-export default function ChaptersClient({ initialColleges, initialTotal }) {
+function ChaptersLoading() {
+    return (
+        <div className="min-h-screen bg-black">
+            <section className="relative py-5 md:py-8 px-4 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-950/30 via-black to-black" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                <div className="relative max-w-7xl mx-auto text-center">
+                    <div className="h-12 w-64 mx-auto bg-white/5 rounded-lg animate-pulse mb-4" />
+                    <div className="max-w-xl mx-auto h-12 bg-white/5 rounded-xl animate-pulse" />
+                    <div className="flex justify-center gap-6 md:gap-8 mt-2">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="h-8 w-20 bg-white/5 rounded animate-pulse" />
+                        ))}
+                    </div>
+                </div>
+            </section>
+            <section className="px-4 pb-20 pt-5">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="rounded-2xl bg-[#0f0f0f] border border-white/10 overflow-hidden">
+                                <div className="h-28 w-full bg-white/5 animate-pulse" />
+                                <div className="p-4 pt-8 space-y-2">
+                                    <div className="h-5 w-3/4 bg-white/5 animate-pulse" />
+                                    <div className="h-3 w-1/2 bg-white/5 animate-pulse" />
+                                    <div className="h-3 w-full bg-white/5 animate-pulse" />
+                                    <div className="h-6 w-16 bg-white/5 animate-pulse" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+}
+
+function ChaptersContent({ initialColleges, initialTotal }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -50,27 +87,21 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
     }, [filters, pagination]);
 
     useEffect(() => {
-        // Restore pagination from localStorage on mount
         const savedPage = localStorage.getItem('chaptersPage');
         
-        // Check if we're redirecting from a chapter page
         const redirectPage = sessionStorage.getItem('redirectToPage');
         
         if (redirectPage) {
-            // Use the redirect page and clear it
             setPagination(prev => ({ ...prev, page: parseInt(redirectPage) }));
             sessionStorage.removeItem('redirectToPage');
         } else if (savedPage && !searchParams.get('page')) {
-            // Otherwise use saved page from localStorage
             setPagination(prev => ({ ...prev, page: parseInt(savedPage) }));
         }
     }, []);
 
     useEffect(() => {
-        // Save current page to localStorage whenever it changes
         localStorage.setItem('chaptersPage', pagination.page.toString());
         
-        // Update URL with page parameter
         const params = new URLSearchParams(searchParams.toString());
         if (pagination.page > 1) {
             params.set('page', pagination.page.toString());
@@ -118,7 +149,6 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
 
     return (
         <div className="min-h-screen bg-black">
-            {/* Back Button */}
             <button
                 onClick={handleBack}
                 className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-white hover:bg-white/10 transition-all group"
@@ -317,5 +347,13 @@ export default function ChaptersClient({ initialColleges, initialTotal }) {
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function ChaptersClient({ initialColleges, initialTotal }) {
+    return (
+        <Suspense fallback={<ChaptersLoading />}>
+            <ChaptersContent initialColleges={initialColleges} initialTotal={initialTotal} />
+        </Suspense>
     );
 }
