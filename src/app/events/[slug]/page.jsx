@@ -24,9 +24,13 @@ async function getEvent(slug) {
     }
 }
 
-// Generate static params for popular events ---------------xxxxxxxxxx--------------- IMPORTANT AHI KARANA HAI ISE
 export async function generateStaticParams() {
-    return [];
+  const res = await fetch(`${process.env.API_URL}/user/events/all`);
+  const data = await res.json();
+
+  return data.data.map((event) => ({
+    slug: event.slug,
+  }));
 }
 
 export async function generateMetadata({ params }) {

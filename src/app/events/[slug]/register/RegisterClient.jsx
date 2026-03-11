@@ -750,6 +750,21 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
     });
   };
 
+  // Helper function to format date for display
+  const formatDateValue = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+  };
+
+  // Helper function to get min/max date constraints
+  const getDateConstraints = (field) => {
+    const constraints = {};
+    if (field.minDate) constraints.min = field.minDate;
+    if (field.maxDate) constraints.max = field.maxDate;
+    return constraints;
+  };
+
   if (fetchLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -1104,6 +1119,7 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                       {/* Dynamic Form Fields */}
                       {formFields.map((field, index) => {
                         const Icon = fieldIcons[field.name?.toLowerCase()] || fieldIcons.default;
+                        const dateConstraints = getDateConstraints(field);
 
                         return (
                           <motion.div
@@ -1111,7 +1127,7 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className={field.type === "TEXTAREA" || field.type === "FILE" || field.type === "SELECT" ? "md:col-span-2" : ""}
+                            className={field.type === "TEXTAREA" || field.type === "FILE" || field.type === "SELECT" || field.type === "DATE" ? "md:col-span-2" : ""}
                           >
                             <Label className="text-gray-300 mb-2 block">
                               {field.label}
@@ -1134,7 +1150,7 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#0f0f0f] border-white/10 text-white">
                                   {field.options?.map((option) => (
-                                    <SelectItem key={option} value={option} className="focus:bg-white/10">
+                                    <SelectItem key={option} value={option} className="focus:bg-white/10 focus:text-white">
                                       {option}
                                     </SelectItem>
                                   ))}
@@ -1172,6 +1188,19 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                                 <Label htmlFor={field.name} className="text-gray-300 cursor-pointer">
                                   {field.placeholder || field.label}
                                 </Label>
+                              </div>
+                            ) : field.type === "DATE" ? (
+                              <div className="relative">
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                                <Input
+                                  type="date"
+                                  placeholder={field.placeholder}
+                                  value={formData[field.name] || ""}
+                                  min={dateConstraints.min}
+                                  max={dateConstraints.max}
+                                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                                  className="bg-white/5 border-white/10 text-white rounded-xl h-12 pl-10 focus:border-blue-500/50 focus:ring-blue-500/20 [color-scheme:dark]"
+                                />
                               </div>
                             ) : (
                               <div className="relative">
@@ -1285,12 +1314,22 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                         const value = formData[field.name];
                         if (!value && value !== false) return null;
                         
+                        // Format date value for display
+                        let displayValue = value;
+                        if (field.type === "DATE" && value) {
+                          displayValue = new Date(value).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          });
+                        }
+                        
                         return (
                           <div key={field.name} className="flex justify-between py-2 border-b border-white/5 last:border-0">
                             <span className="text-gray-400">{field.label}</span>
                             <span className="text-white font-medium truncate max-w-[200px]">
-                              {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : 
-                               typeof value === 'object' ? value.name : value}
+                              {typeof displayValue === 'boolean' ? (displayValue ? 'Yes' : 'No') : 
+                               typeof displayValue === 'object' ? displayValue.name : displayValue}
                             </span>
                           </div>
                         );
