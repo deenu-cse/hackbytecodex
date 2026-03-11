@@ -1,10 +1,8 @@
 export default async function sitemap() {
 
-  // fetch events
-  const eventRes = await fetch(`${process.env.API_URL}/user/events`);
+  const eventRes = await fetch(`${process.env.API_URL}/user/events/all`);
   const eventData = await eventRes.json();
 
-  // fetch colleges (chapters)
   const collegeRes = await fetch(`${process.env.API_URL}/user/colleges`);
   const collegeData = await collegeRes.json();
 
