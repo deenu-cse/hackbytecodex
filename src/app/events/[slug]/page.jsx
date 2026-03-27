@@ -14,10 +14,15 @@ async function getEvent(slug) {
 
         if (!res.ok) {
             if (res.status === 404) return null;
-            throw new Error("Failed to fetch event");
+            return null; // Don't throw to prevent build crashing, just fallback
         }
 
-        return res.json();
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            return null;
+        }
+
+        return await res.json();
     } catch (error) {
         console.error("Error fetching event:", error);
         return null;
@@ -25,12 +30,28 @@ async function getEvent(slug) {
 }
 
 export async function generateStaticParams() {
-  const res = await fetch(`${process.env.API_URL}/user/events/all`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${process.env.API_URL}/user/events/all`);
+    if (!res.ok) {
+      console.warn("API not accessible during build. Skipping static params for events.");
+      return [];
+    }
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.warn("API returned non-JSON. Skipping static params.");
+      return [];
+    }
+    const data = await res.json();
 
-  return data.data.map((event) => ({
-    slug: event.slug,
-  }));
+    if (!data || !data.data || !Array.isArray(data.data)) return [];
+
+    return data.data.map((event) => ({
+      slug: event.slug,
+    }));
+  } catch (error) {
+    console.error("Error in generateStaticParams for events:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {

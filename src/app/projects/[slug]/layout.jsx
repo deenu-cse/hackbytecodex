@@ -14,7 +14,12 @@ async function getProject(slug) {
 
     if (!res.ok) {
       if (res.status === 404) return null;
-      throw new Error("Failed to fetch project");
+      return null;
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return null;
     }
 
     const data = await res.json();
@@ -30,6 +35,13 @@ export async function generateStaticParams() {
   try {
     // Fetch top projects for static generation
     const res = await fetch(`${API_URL}/projects/all?limit=50&sort=trending`);
+    if (!res.ok) {
+      return [];
+    }
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return [];
+    }
     const data = await res.json();
 
     if (data.success && Array.isArray(data.data)) {
