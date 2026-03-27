@@ -1,4 +1,26 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+import { slugify } from "../slugify";
+
+export async function fetchCollegeBySlug(slug) {
+  try {
+    // 1. Convert slug 'xyz-college' -> 'xyz college' for the search API
+    const searchPart = slug.split('-').join(' ');
+    const res = await fetchColleges({ search: searchPart }, { page: 1, limit: 50 });
+    
+    if (res && res.colleges) {
+      const match = res.colleges.find(c => slugify(c.name) === slug);
+      if (match) {
+        return await fetchCollegeByName(match.name);
+      }
+    }
+    
+    // Fallback just in case they send the raw name directly somehow
+    return await fetchCollegeByName(slug);
+  } catch (err) {
+    console.error("Error fetching college by slug:", err);
+    return null;
+  }
+}
 
 export async function fetchColleges(filters = {}, pagination = { page: 1, limit: 12 }) {
   try {

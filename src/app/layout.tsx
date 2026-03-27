@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HackByteCodex – Student Projects & Tech Events",
+  title: {
+    default: "HackByteCodex – Student Projects & Tech Events",
+    template: "%s | HackByteCodex"
+  },
   description: "HackByteCodex is a platform to discover student projects, participate in tech events, and collaborate with developers worldwide.",
   verification: {
     google: "8crx0yeYS-gg8dHaf9GWyiU0demutBcFFoFGpi98dhs",

@@ -1,3 +1,6 @@
+import { fetchColleges } from "@/lib/api/colleges";
+import { slugify } from "@/lib/slugify";
+
 export default async function sitemap() {
 
   try {
@@ -14,6 +17,15 @@ export default async function sitemap() {
     const data = await res.json();
 
     const events = data?.data || [];
+    
+    // Fetch colleges for sitemap
+    let colleges = [];
+    try {
+      const collegesRes = await fetchColleges({}, { page: 1, limit: 1000 });
+      colleges = collegesRes?.colleges || [];
+    } catch (err) {
+      console.error("Failed to fetch colleges for sitemap");
+    }
 
     return [
       {
@@ -23,6 +35,10 @@ export default async function sitemap() {
       ...events.map((event) => ({
         url: `https://hackbytecodex.com/events/${event.slug}`,
         lastModified: new Date(event.updatedAt),
+      })),
+      ...colleges.map((college) => ({
+        url: `https://hackbytecodex.com/chapter/${slugify(college.name)}`,
+        lastModified: new Date(),
       })),
     ];
 

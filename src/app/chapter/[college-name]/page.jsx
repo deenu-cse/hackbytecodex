@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import { fetchCollegeByName } from "@/lib/api/colleges";
+import { fetchCollegeBySlug } from "@/lib/api/colleges";
 import ChapterDetailClient from "./ChapterDetailClient";
 
 export async function generateMetadata({ params }) {
   const { "college-name": collegeNameParam } = await params;
   const collegeName = decodeURIComponent(collegeNameParam);
-  const college = await fetchCollegeByName(collegeName);
+  const college = await fetchCollegeBySlug(collegeName);
   
   if (!college) {
     return {
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }) {
 export default async function ChapterPage({ params }) {
   const { "college-name": collegeNameParam } = await params;
   const collegeName = decodeURIComponent(collegeNameParam);
-  const college = await fetchCollegeByName(collegeName);
+  const college = await fetchCollegeBySlug(collegeName);
   
   if (!college) {
     notFound();
