@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
     ArrowRight,
-    Sparkles,
     CheckCircle2,
     XCircle,
     Loader2,
@@ -16,16 +15,25 @@ import {
     Lock,
     Eye,
     EyeOff,
-    Zap,
     Globe,
     Shield,
     Rocket,
     ChevronRight,
     Github,
-    Chrome
+    Chrome,
+    AlertTriangle
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// Google error messages map
+const GOOGLE_ERROR_MESSAGES = {
+    google_denied: "Google sign-in was cancelled. Please try again.",
+    google_failed: "Google sign-in failed. Please try again or use email/password.",
+    google_init_failed: "Could not connect to Google. Please try again.",
+    no_email: "Could not retrieve your email from Google. Please try again.",
+    no_code: "Invalid Google response. Please try again.",
+};
 
 const quotes = [
     { text: "Code. Create. Conquer.", author: "HackByteCodex" },
@@ -35,8 +43,9 @@ const quotes = [
     { text: "Join 50,000+ builders shaping tomorrow.", author: "HB Network" }
 ];
 
-export default function LoginPage() {
+function LoginPageInner() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [currentQuote, setCurrentQuote] = useState(0);
     const [formData, setFormData] = useState({
         email: "",
@@ -45,8 +54,30 @@ export default function LoginPage() {
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);
+    const [notification, setNotification] = useState(null); // { type: 'success'|'error'|'info', message }
+
+    // Handle Google OAuth return params
+    useEffect(() => {
+        const authToken = searchParams.get("authToken");
+        const authSuccess = searchParams.get("authSuccess");
+        const errorCode = searchParams.get("error");
+
+        if (authToken && authSuccess === "1") {
+            // Existing user returning from Google OAuth — auto-login
+            localStorage.setItem("codexToken", authToken);
+            setLoginSuccess(true);
+            setTimeout(() => router.push("/"), 1500);
+            return;
+        }
+
+        if (errorCode) {
+            const msg = GOOGLE_ERROR_MESSAGES[errorCode] || "Something went wrong with Google sign-in.";
+            setErrors({ submit: msg });
+        }
+    }, [searchParams, router]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -112,8 +143,18 @@ export default function LoginPage() {
         }
     };
 
+    const handleGoogleLogin = () => {
+        setGoogleLoading(true);
+        // Redirect to backend Google OAuth — it handles everything
+        window.location.href = `${API_URL}/auth/google`;
+    };
+
     const handleSocialLogin = (provider) => {
-        window.location.href = `${API_URL}/auth/${provider}`;
+        if (provider === "google") {
+            handleGoogleLogin();
+        } else {
+            window.location.href = `${API_URL}/auth/${provider}`;
+        }
     };
 
     if (loginSuccess) {
@@ -301,10 +342,20 @@ export default function LoginPage() {
                             <button
                                 type="button"
                                 onClick={() => handleSocialLogin("google")}
-                                className="flex items-center justify-center gap-2 h-12 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group cursor-pointer"
+                                disabled={googleLoading}
+                                className="flex items-center justify-center gap-2 h-12 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
                             >
-                                <Chrome className="w-5 h-5 text-red-400 group-hover:scale-110 transition-transform" />
-                                <span className="text-sm font-medium">Google</span>
+                                {googleLoading ? (
+                                    <Loader2 className="w-5 h-5 animate-spin text-red-400" />
+                                ) : (
+                                    <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115Z"/>
+                                        <path fill="#34A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987Z"/>
+                                        <path fill="#4A90D9" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21Z"/>
+                                        <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067Z"/>
+                                    </svg>
+                                )}
+                                <span className="text-sm font-medium">{googleLoading ? "Redirecting..." : "Google"}</span>
                             </button>
                             <button
                                 type="button"
@@ -492,3 +543,15 @@ export default function LoginPage() {
         </div>
     );
 }
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+            </div>
+        }>
+            <LoginPageInner />
+        </Suspense>
+    );
+}
