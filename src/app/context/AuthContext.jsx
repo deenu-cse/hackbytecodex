@@ -14,16 +14,34 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   useEffect(() => {
+    const handleUrlToken = () => {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const authToken = params.get("authToken");
+        const authSuccess = params.get("authSuccess");
+
+        if (authToken && authSuccess === "1") {
+          localStorage.setItem("codexToken", authToken);
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.location.replace(cleanUrl);
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (handleUrlToken()) {
+      return;
+    }
+
     const initAuth = async () => {
       const codexToken = localStorage.getItem("codexToken");
       if (codexToken) {
         try {
           const response = await fetch(`${API_URL}/auth/me`, {
-            headers: {
-              Authorization: `Bearer ${codexToken}`,
-            },
+            headers: { Authorization: `Bearer ${codexToken}` },
           });
-          
+
           if (response.ok) {
             const data = await response.json();
             setUser(data.data);
@@ -44,7 +62,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",

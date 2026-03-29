@@ -198,7 +198,6 @@ function SetPasswordInner() {
         );
     }
 
-    // ── Verifying screen ────────────────────────────────────────────────────
     if (tokenStatus === "verifying") {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center p-4">
@@ -210,7 +209,6 @@ function SetPasswordInner() {
         );
     }
 
-    // ── Invalid / Expired token ─────────────────────────────────────────────
     if (tokenStatus === "invalid" || tokenStatus === "expired") {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
@@ -243,10 +241,8 @@ function SetPasswordInner() {
         );
     }
 
-    // ── Main Set Password Form ──────────────────────────────────────────────
     return (
         <div className="min-h-screen bg-black text-white overflow-hidden relative">
-            {/* Background Effects */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[130px] animate-pulse" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[130px] animate-pulse delay-1000" />
@@ -260,7 +256,6 @@ function SetPasswordInner() {
                     transition={{ duration: 0.6 }}
                     className="w-full max-w-lg"
                 >
-                    {/* Logo */}
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block">
                             <span className="text-2xl font-bold text-white italic tracking-tighter">
@@ -269,10 +264,8 @@ function SetPasswordInner() {
                         </Link>
                     </div>
 
-                    {/* Card */}
                     <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
 
-                        {/* Header */}
                         <div className="text-center mb-8">
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -304,7 +297,6 @@ function SetPasswordInner() {
                             </p>
                         </div>
 
-                        {/* User info badge */}
                         {userData && (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
@@ -333,10 +325,8 @@ function SetPasswordInner() {
                             </motion.div>
                         )}
 
-                        {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-5">
 
-                            {/* Password field */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
                                     <Lock className="w-4 h-4 text-gray-500" />
@@ -349,13 +339,12 @@ function SetPasswordInner() {
                                         onChange={(e) => { setPassword(e.target.value); setError(""); }}
                                         placeholder="Create a strong password"
                                         autoComplete="new-password"
-                                        className={`w-full h-12 pl-4 pr-12 rounded-xl bg-white/5 border text-white placeholder:text-gray-600 text-sm outline-none transition-all focus:ring-2 ${
-                                            password && !allRulesPassed
+                                        className={`w-full h-12 pl-4 pr-12 rounded-xl bg-white/5 border text-white placeholder:text-gray-600 text-sm outline-none transition-all focus:ring-2 ${password && !allRulesPassed
                                                 ? "border-yellow-500/40 focus:border-yellow-500/60 focus:ring-yellow-500/10"
                                                 : password && allRulesPassed
-                                                ? "border-green-500/40 focus:border-green-500/60 focus:ring-green-500/10"
-                                                : "border-white/10 group-hover:border-white/20 focus:border-indigo-500/60 focus:ring-indigo-500/10"
-                                        }`}
+                                                    ? "border-green-500/40 focus:border-green-500/60 focus:ring-green-500/10"
+                                                    : "border-white/10 group-hover:border-white/20 focus:border-indigo-500/60 focus:ring-indigo-500/10"
+                                            }`}
                                     />
                                     <button
                                         type="button"
@@ -366,7 +355,6 @@ function SetPasswordInner() {
                                     </button>
                                 </div>
 
-                                {/* Strength meter */}
                                 {password.length > 0 && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
@@ -393,7 +381,6 @@ function SetPasswordInner() {
                                 )}
                             </div>
 
-                            {/* Password rules checklist */}
                             {password.length > 0 && (
                                 <motion.div
                                     initial={{ opacity: 0, y: -5 }}
@@ -427,13 +414,12 @@ function SetPasswordInner() {
                                         onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
                                         placeholder="Repeat your password"
                                         autoComplete="new-password"
-                                        className={`w-full h-12 pl-4 pr-12 rounded-xl bg-white/5 border text-white placeholder:text-gray-600 text-sm outline-none transition-all focus:ring-2 ${
-                                            confirmPassword && !passwordsMatch
+                                        className={`w-full h-12 pl-4 pr-12 rounded-xl bg-white/5 border text-white placeholder:text-gray-600 text-sm outline-none transition-all focus:ring-2 ${confirmPassword && !passwordsMatch
                                                 ? "border-red-500/40 focus:border-red-500/60 focus:ring-red-500/10"
                                                 : confirmPassword && passwordsMatch
-                                                ? "border-green-500/40 focus:border-green-500/60 focus:ring-green-500/10"
-                                                : "border-white/10 group-hover:border-white/20 focus:border-indigo-500/60 focus:ring-indigo-500/10"
-                                        }`}
+                                                    ? "border-green-500/40 focus:border-green-500/60 focus:ring-green-500/10"
+                                                    : "border-white/10 group-hover:border-white/20 focus:border-indigo-500/60 focus:ring-indigo-500/10"
+                                            }`}
                                     />
                                     <button
                                         type="button"
