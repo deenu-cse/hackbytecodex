@@ -491,6 +491,7 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState({});
   const [isNewUser, setIsNewUser] = useState(false);
+  const [formNotFound, setFormNotFound] = useState(false);
 
   const [event, setEvent] = useState(initialEvent);
   const [formFields, setFormFields] = useState(initialFormFields || []);
@@ -598,6 +599,16 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
           if (formDataRes.success && formDataRes.data) {
             setFormFields(formDataRes.data.fields || []);
             setInstructions(formDataRes.data.instructions || []);
+          }
+        } else {
+          try {
+            const errorData = await formRes.json();
+            if (errorData.success === false && errorData.message === "Event form not found") {
+              setFormNotFound(true);
+              setError("Event form not found. You cannot proceed with registration.");
+            }
+          } catch (e) {
+            // ignore JSON parse error
           }
         }
       } catch (err) {
@@ -1364,7 +1375,8 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                 {step < totalSteps ? (
                   <Button
                     onClick={handleNext}
-                    className={`bg-gradient-to-r ${config.color} hover:opacity-90 text-white rounded-xl px-8`}
+                    disabled={formNotFound}
+                    className={`bg-gradient-to-r ${config.color} hover:opacity-90 text-white rounded-xl px-8 disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     Continue
                     <ChevronRight className="w-5 h-5 ml-2" />
@@ -1372,8 +1384,8 @@ export function RegisterClient({ event: initialEvent, formFields: initialFormFie
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={loading}
-                    className={`bg-gradient-to-r ${config.color} hover:opacity-90 text-white rounded-xl px-8 h-12`}
+                    disabled={loading || formNotFound}
+                    className={`bg-gradient-to-r ${config.color} hover:opacity-90 text-white rounded-xl px-8 h-12 disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {loading ? (
                       <>
