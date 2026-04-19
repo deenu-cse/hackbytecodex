@@ -33,6 +33,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import EventLeaderboard from "@/components/events/EventLeaderboard";
+import { EventRating } from "@/components/events/EventRating";
 
 const typeConfig = {
   HACKATHON: {
@@ -455,6 +456,19 @@ export function EventDetailClient({ event }) {
             </motion.section>
 
             <EventLeaderboard eventId={event._id} />
+
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <span className={`w-1 h-8 rounded-full bg-gradient-to-b ${config.color}`} />
+                Rate & Review
+              </h2>
+              <EventRating eventId={event._id} />
+            </motion.section>
 
             <motion.section
               initial={{ opacity: 0, y: 20 }}
